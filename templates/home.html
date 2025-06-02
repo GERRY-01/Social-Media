@@ -141,6 +141,35 @@
                 padding: 1.5rem;
             }
         }
+
+        .post-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .post-card {
+            background-color: white;
+            width: 400px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .caption {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .post-media {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -162,7 +191,7 @@
     <!-- Main Content -->
     <div class="container">
         <h2>Create a New Post</h2>
-        <form action="" method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div>
                 <label for="media">Select Image or Video</label>
@@ -179,6 +208,29 @@
             </div>
         </form>
     </div>
+
+<!-- Posts Section -->
+<div class="post-container">
+    {% for post in all_posts %}
+        <div class="post-card">
+            {% if post.caption %}
+                <p class="caption">{{ post.caption }}</p>
+            {% endif %}
+
+            {% if post.media %}
+                {% if ".mp4" in post.media.url|lower %}
+                    <video class="post-media" controls>
+                        <source src="{{ post.media.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <img src="{{ post.media.url }}" alt="Posted Image" class="post-media">
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
 
 </body>
 </html>
