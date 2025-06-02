@@ -203,13 +203,93 @@
         .action-btn span {
             color: inherit;
             transition: color 0.2s ease;
-}
+        }
 
 
         .action-btn:hover {
             background-color:rgb(184, 187, 192);
             cursor: pointer
         }
+
+        /* Hide comments section by default */
+    .comments-section {
+        display: none;
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .comments-section h4 {
+        margin-bottom: 10px;
+        color: #2563eb;
+    }
+
+    .comments-list p {
+        margin: 5px 0;
+    }
+
+    /* Style for comment input and button */
+    .comments-section form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .comments-section input[type="text"] {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .comments-section button[type="submit"] {
+        padding: 8px 12px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .comments-section button[type="submit"]:hover {
+        background-color: #1d4ed8;
+    }
+    .comment-overlay {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 70%;
+        background-color: #fff;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+        overflow-y: auto;
+        padding: 1rem;
+        z-index: 999;
+    }
+
+    .comment-overlay.active {
+        transform: translateY(0);
+    }
+
+    .comment-overlay h4 {
+        margin-bottom: 1rem;
+    }
+
+    .comment-overlay .close-btn {
+        text-align: right;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #2563eb;
+        font-weight: bold;
+    }
+
 
     </style>
 </head>
@@ -251,6 +331,7 @@
     </div>
 
 <!-- Posts Section -->
+<!-- Posts Section -->
 <div class="post-container">
     {% for post in all_posts %}
         <div class="post-card">
@@ -267,17 +348,61 @@
                 {% else %}
                     <img src="{{ post.media.url }}" alt="Posted Image" class="post-media">
                 {% endif %}
-                        <div class="post-actions">
-                            <button class="action-btn"><i class="fas fa-thumbs-up"></i> <span>Like</span></button>
-                            <button class="action-btn"><i class="fas fa-comment"></i> <span>Comment</span></button>
-                            <button class="action-btn"><i class="fas fa-share"></i> <span>Share</span></button>
-                        </div>
+            {% endif %}
 
-                    {% endif %}
+            <div class="post-actions">
+                <button class="action-btn"><i class="fas fa-thumbs-up"></i> <span>Like</span></button>
+                <button class="action-btn"><i class="fas fa-comment"></i> <span>Comment</span></button>
+                <button class="action-btn"><i class="fas fa-share"></i> <span>Share</span></button>
+            </div>
+
+           <!-- Comment Section -->
+<div class="comments-section">
+    <h4>Comments</h4>
+
+    <!-- Existing Comments -->
+    <div class="comments-list">
+        {% for comment in post.comments.all %}
+            <p><strong> {{ comment.content }}</strong></p>
+        {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Add Comment Form -->
+    <form method="post" action="{% url 'add_comment' post.id %}">
+        {% csrf_token %}
+        <input type="text" name="comment_text" placeholder="Add a comment..." required>
+        <button type="submit">Post</button>
+    </form>
+</div>
+
+
         </div>
     {% endfor %}
 </div>
 
+<script>
+    // Select all comment buttons
+    const commentButtons = document.querySelectorAll('.post-card .action-btn:nth-child(2)');
+
+    commentButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            // Find the closest post card container
+            const postCard = btn.closest('.post-card');
+
+            // Find the comments section within this post card
+            const commentsSection = postCard.querySelector('.comments-section');
+
+            // Toggle display
+            if (commentsSection.style.display === 'block') {
+                commentsSection.style.display = 'none';
+            } else {
+                commentsSection.style.display = 'block';
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
