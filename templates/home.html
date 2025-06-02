@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Social Media - Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
     <style>
         /* Reset and base styles */
         * {
@@ -170,6 +174,43 @@
             object-fit: cover;
             border-radius: 5px;
         }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+            color: #2563eb; /* keep icon blue */
+        }
+
+        .action-btn span {
+            color: inherit;
+            transition: color 0.2s ease;
+}
+
+
+        .action-btn:hover {
+            background-color:rgb(184, 187, 192);
+            cursor: pointer
+        }
+
     </style>
 </head>
 <body>
@@ -226,7 +267,13 @@
                 {% else %}
                     <img src="{{ post.media.url }}" alt="Posted Image" class="post-media">
                 {% endif %}
-            {% endif %}
+                        <div class="post-actions">
+                            <button class="action-btn"><i class="fas fa-thumbs-up"></i> <span>Like</span></button>
+                            <button class="action-btn"><i class="fas fa-comment"></i> <span>Comment</span></button>
+                            <button class="action-btn"><i class="fas fa-share"></i> <span>Share</span></button>
+                        </div>
+
+                    {% endif %}
         </div>
     {% endfor %}
 </div>
