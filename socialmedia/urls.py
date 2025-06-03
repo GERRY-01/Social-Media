@@ -23,6 +23,7 @@ from socialmedia import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('socialapp', include('socialapp.urls')),
+    path('authentication', include('authentication.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
