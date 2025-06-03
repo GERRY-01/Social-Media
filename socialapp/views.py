@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render,redirect
-from . models import Comments, Posts
+from . models import Comments, Posts,Likes
 from authentication.models import Registration,User
 # Create your views here.
 def home(request):
@@ -20,6 +20,11 @@ def home(request):
             return redirect("home")
     
     all_posts = Posts.objects.all().order_by('-id')
+    
+    for post in all_posts:
+         post.is_liked = post.likes.filter(user=request.user).exists()
+
+    
     return render(request, 'home.html', {'all_posts':all_posts,'profile':profile})
 
 def add_comment(request, post_id):
@@ -28,3 +33,10 @@ def add_comment(request, post_id):
         post = get_object_or_404(Posts, id=post_id)
         Comments.objects.create(post=post, content=comment_text)
         return redirect("home")
+
+def likes(request, post_id):
+    post = get_object_or_404(Posts, id = post_id)
+    like, created = Likes.objects.get_or_create(user = request.user, post= post)
+    if not created:
+        like.delete()
+    return redirect("home")
