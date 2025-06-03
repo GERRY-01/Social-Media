@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f3;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="text"], input[type="date"], input[type="file"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Complete Your Registration</h2>
+
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="profile_picture">Profile Picture</label>
+        <input type="file" name="profile_picture" id="profile_picture" required>
+
+        <label for="dob">Date of Birth</label>
+        <input type="date" name="dob" id="dob" required>
+
+        <label for="gender">Gender</label>
+        <select name="gender" id="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="location">Location</label>
+        <input type="text" name="location" id="location" placeholder="City, Country" required>
+
+        <label for="hobbies">Hobbies</label>
+        <textarea name="hobbies" id="hobbies" rows="4" placeholder="e.g., Reading, coding, swimming" required></textarea>
+
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
+</body>
+</html>
