@@ -322,7 +322,37 @@
         font-weight: 500;
         color: #333;
     }
+    
+    /* Style for the like/unlike button */
+    .action-btn {
+        background-color: #f0f0f0;
+        color: #333;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s ease;
+    }
 
+    .action-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    /* Style for the like icon when post is liked */
+    .action-btn .liked {
+        color: red;
+    }
+
+    /* Optional: style for the like count */
+    .like-count {
+        margin-left: 8px;
+        font-weight: normal;
+        color: #555;
+    }
 
 
     </style>
@@ -393,7 +423,19 @@
             {% endif %}
 
             <div class="post-actions">
-                <button class="action-btn"><i class="fas fa-thumbs-up"></i> <span>Like</span><span class="like-count">0</span></button>
+                <!--form for the like button-->
+                <form method="POST" action="{% url 'likes' post.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn">
+                        {% if post.is_liked %}
+                            <i class="fas fa-thumbs-up liked"></i> Unlike
+                        {% else %}
+                            <i class="fas fa-thumbs-up"></i> Like
+                        {% endif %}
+                        <span class="like-count">{{ post.likes.count }}</span>
+                    </button>
+                </form>
+
                 <button class="action-btn"><i class="fas fa-comment"></i> <span>Comment</span><span class="comment-count">{{post.comments.count}}</span></button>
                 <button class="action-btn"><i class="fas fa-share"></i> <span>Share</span></button>
             </div>
