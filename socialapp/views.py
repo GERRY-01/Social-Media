@@ -1,7 +1,16 @@
 from django.shortcuts import get_object_or_404, render,redirect
 from . models import Comments, Posts
+from authentication.models import Registration,User
 # Create your views here.
 def home(request):
+    if request.user.is_authenticated: 
+        try:
+            profile = Registration.objects.get(user = request.user)
+        except Registration.DoesNotExist:
+            profile = None
+            
+    else: 
+        profile = None
     if request.method == 'POST':
         if 'media' in request.FILES:
             file = request.FILES.get("media")
@@ -11,7 +20,7 @@ def home(request):
             return redirect("home")
     
     all_posts = Posts.objects.all().order_by('-id')
-    return render(request, 'home.html', {'all_posts':all_posts})
+    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
