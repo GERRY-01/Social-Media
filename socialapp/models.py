@@ -8,7 +8,7 @@ class Posts(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
 class Comments(models.Model):
-    #user = models.ForeignKey(User, on_delete= models.CASCADE)
+    user = models.ForeignKey(User, on_delete= models.CASCADE)
     post = models.ForeignKey(Posts, on_delete = models.CASCADE, related_name="comments")
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
