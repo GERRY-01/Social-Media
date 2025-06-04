@@ -42,4 +42,5 @@ def likes(request, post_id):
     return redirect("home")
 
 def profile(request):
-    return render(request, 'profile.html')
+    user_posts = Posts.objects.filter(user = request.user).order_by('-id')
+    return render(request, 'profile.html',{'user_posts':user_posts})
