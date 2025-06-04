@@ -445,6 +445,8 @@
             <div class= "post-header">
             <img class = "post-profile-pic" src="{{ post.user.registration.image.url }}" alt="Profile Picture">
             <p><strong>{{ post.user.username }}</strong></p>
+            {% load humanize %}
+             <p class="post-time">{{ post.created_at|naturaltime }}</p>
             </div>
             {% if post.caption %}
                 <p class="caption">{{ post.caption }}</p>
