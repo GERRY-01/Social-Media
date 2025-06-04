@@ -40,3 +40,6 @@ def likes(request, post_id):
     if not created:
         like.delete()
     return redirect("home")
+
+def profile(request):
+    return render(request, 'profile.html')
