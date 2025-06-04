@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <style>
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .profile-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+        }
+
+        .profile-header h2 {
+            margin-top: 15px;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px 25px;
+            padding-top: 20px;
+        }
+
+        .profile-details label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .profile-details div {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="{{ request.user.registration.image.url }}" alt="Profile Picture">
+        <h2>{{ request.user.username }}</h2>
+    </div>
+
+    <div class="profile-details">
+        <label>First Name:</label>
+        <div>{{ request.user.first_name }}</div>
+
+        <label>Last Name:</label>
+        <div>{{ request.user.last_name }}</div>
+
+        <label>Email:</label>
+        <div>{{ request.user.email }}</div>
+
+        <label>Date of Birth:</label>
+        <div>{{ request.user.registration.dob }}</div>
+
+        <label>Gender:</label>
+        <div>{{ request.user.registration.gender }}</div>
+
+        <label>Location:</label>
+        <div>{{request.user.registration.location }}</div>
+
+        <label>Hobbies:</label>
+        <div>{{ request.user.registration.hobbies }}</div>
+    </div>
+</div>
+
+</body>
+</html>
