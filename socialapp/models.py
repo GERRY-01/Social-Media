@@ -3,6 +3,7 @@ from authentication.models import User
 
 # Create your models here.
 class Posts(models.Model):
+    user = models.ForeignKey(User, on_delete= models.CASCADE)
     media = models.FileField(upload_to='files')
     caption = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
