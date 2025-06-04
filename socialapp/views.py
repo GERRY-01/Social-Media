@@ -15,7 +15,7 @@ def home(request):
         if 'media' in request.FILES:
             file = request.FILES.get("media")
             caption = request.POST.get("caption")
-            my_posts = Posts(media = file, caption = caption)
+            my_posts = Posts(user = request.user,media = file, caption = caption)
             my_posts.save()
             return redirect("home")
     
