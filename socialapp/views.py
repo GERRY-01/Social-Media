@@ -31,7 +31,7 @@ def add_comment(request, post_id):
     if request.method == 'POST':
         comment_text = request.POST.get("comment_text")
         post = get_object_or_404(Posts, id=post_id)
-        Comments.objects.create(post=post, content=comment_text)
+        Comments.objects.create(user = request.user,post=post, content=comment_text)
         return redirect("home")
 
 def likes(request, post_id):
