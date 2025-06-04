@@ -354,6 +354,41 @@
         color: #555;
     }
 
+    .comment-profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+    .comment {
+        margin-bottom: 15px;
+    }
+    .comment-content {
+        margin-left: 50px;
+    }
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+    .user-info .username {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0;
+    }
+    .post-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px; 
+}
+
+
+
+
 
     </style>
 </head>
@@ -368,7 +403,7 @@
                 <a href="#">Reels</a>
                 <a href="#">Followers</a>
                 <a href="#">Messages</a>
-                <a href="#">Profile</a>
+                <a href="{% url 'profile' %}">Profile</a>
             </div>
         </div>
     </nav>
@@ -407,6 +442,10 @@
 <div class="post-container">
     {% for post in all_posts %}
         <div class="post-card">
+            <div class= "post-header">
+            <img class = "post-profile-pic" src="{{ post.user.registration.image.url }}" alt="Profile Picture">
+            <p><strong>{{ post.user.username }}</strong></p>
+            </div>
             {% if post.caption %}
                 <p class="caption">{{ post.caption }}</p>
             {% endif %}
@@ -446,8 +485,17 @@
 
     <!-- Existing Comments -->
     <div class="comments-list">
-        {% for comment in post.comments.all %}
-            <p><strong> {{ comment.content }}</strong></p>
+         {% for comment in post.comments.all %}
+            <div class="comment">
+                <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <img src="{{ comment.user.registration.image.url }}" alt="Profile Pic"
+                         class="comment-profile-pic"
+                         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                    <strong>{{ comment.user.username }}</strong>
+                </div>
+                <p class="comment-content" style="margin-left: 50px;">{{ comment.content }}</p>
+            </div>
+            <hr>
         {% empty %}
             <p>No comments yet. Be the first to comment!</p>
         {% endfor %}
