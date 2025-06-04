@@ -54,6 +54,74 @@
         .profile-details div {
             color: #333;
         }
+        /* Heading */
+.post-heading {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1c1e21;
+  margin: 30px 0 20px;
+  padding-left: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Container for posts - grid with 3 columns */
+.post-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 0 20px 40px;
+  justify-content: start; /* aligns grid items to the left */
+}
+
+/* Each post card */
+.post-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+  padding: 15px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 100%;
+}
+
+/* Post time */
+.post-time {
+  font-size: 12px;
+  color: #65676b;
+  margin-bottom: 10px;
+}
+
+/* Caption text */
+.caption {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #050505;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+}
+
+/* Media - square-ish, Instagram style */
+.post-media {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Forces a square */
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-top: auto; /* push media to bottom if caption is short */
+}
+
+/* No posts message */
+.no-posts-text {
+  font-size: 16px;
+  color: #888;
+  margin: 40px 20px;
+}
+
+       
+
+        
     </style>
 </head>
 <body>
@@ -87,6 +155,35 @@
         <div>{{ request.user.registration.hobbies }}</div>
     </div>
 </div>
+
+<h2 class="post-heading">My Posts</h2>
+{% if user_posts %}
+    <div class="post-container">
+        {% for post in user_posts %}
+            <div class="post-card">
+                {% load humanize %}
+                <p class="post-time">{{ post.created_at|naturaltime }}</p>
+                {% if post.caption %}
+                    <p class="caption">{{ post.caption }}</p>
+                {% endif %}
+                {% if post.media %}
+                    {% if ".mp4" in post.media.url|lower %}
+                        <video class="post-media" controls>
+                            <source src="{{ post.media.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <img src="{{ post.media.url }}" alt="Posted Image" class="post-media">
+                    {% endif %}
+                {% endif %}
+                
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="no-posts-text">You haven't posted anything yet.</p>
+{% endif %}
+
 
 </body>
 </html>
