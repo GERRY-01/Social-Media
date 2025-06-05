@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render,redirect
-from . models import Comments, Posts,Likes
+from . models import Comments, Posts,Likes,Follow
 from authentication.models import Registration,User
 # Create your views here.
 def home(request):
@@ -8,7 +8,7 @@ def home(request):
             profile = Registration.objects.get(user = request.user)
         except Registration.DoesNotExist:
             profile = None
-            
+       
     else: 
         profile = None
     if request.method == 'POST':
@@ -21,12 +21,14 @@ def home(request):
     
     all_posts = Posts.objects.all().order_by('-id')
     suggestions = User.objects.exclude(id = request.user.id)[:5] if request.user.is_authenticated else []
+    following_ids = set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)) if request.user.is_authenticated else set()
+    
     
     for post in all_posts:
          post.is_liked = post.likes.filter(user=request.user).exists()
 
     
-    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions})
+    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions,'following_ids':following_ids})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
@@ -45,3 +47,15 @@ def likes(request, post_id):
 def profile(request):
     user_posts = Posts.objects.filter(user = request.user).order_by('-id')
     return render(request, 'profile.html',{'user_posts':user_posts})
+
+def follow(request, user_id):
+    target_user = get_object_or_404(User, id = user_id)
+    
+    if request.user == target_user:
+        return redirect("home")
+    
+    follow, created = Follow.objects.get_or_create(follower = request.user, following = target_user)
+    if not created:
+        follow.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+    
