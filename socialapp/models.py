@@ -1,5 +1,6 @@
 from django.db import models
 from authentication.models import User
+from django.utils import timezone
 
 # Create your models here.
 class Posts(models.Model):
@@ -21,3 +22,11 @@ class Likes(models.Model):
     
     class Meta:
         unique_together = ('user','post')
+        
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete= models.CASCADE, related_name="following")
+    following = models.ForeignKey(User, on_delete= models.CASCADE, related_name="follower")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('follower','following')
