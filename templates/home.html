@@ -406,6 +406,12 @@
      background-color: #e0e0e0;
     border-color: #1d4ed8;
     }
+    #profile-link:hover {
+        color: #1d4ed8;
+        text-decoration: none;
+        font-weight: bold;
+        text-decoration: underline;
+    }
 
 
 
@@ -503,7 +509,7 @@
                                 <img src="/static/default-profile.png" alt="Default profile"
                                     style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px;">
                             {% endif %}
-                            <p style="margin: 0; font-weight: 600; color:rgb(26, 85, 196);">{{ user.first_name }} {{ user.last_name }}</p>
+                            <a href="{%url 'view_profile' user.id %}" id="profile-link"> <p style="margin: 0; font-weight: 600; color:rgb(26, 85, 196);">{{ user.first_name }} {{ user.last_name }}</p></a>
                            <!--form for the follow button-->
                             <form method="POST" action="{% url 'follow' user.id %}">
                                 {% csrf_token %}
