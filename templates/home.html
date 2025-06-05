@@ -390,6 +390,25 @@
     color: #666;
     margin: 10px;
    }
+.follow-btn {
+    background-color: #f0f0f0;
+    color: #1d4ed8; /* Facebook-like blue */
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    margin: 10px;
+    }
+
+    .follow-btn:hover {
+     background-color: #e0e0e0;
+    border-color: #1d4ed8;
+    }
+
+
+
 
 
 
@@ -485,6 +504,17 @@
                                     style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px;">
                             {% endif %}
                             <p style="margin: 0; font-weight: 600; color:rgb(26, 85, 196);">{{ user.first_name }} {{ user.last_name }}</p>
+                           <!--form for the follow button-->
+                            <form method="POST" action="{% url 'follow' user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="follow-btn">
+                                    {% if user.id in following_ids %}
+                                        Unfollow
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
+                                </button>
+                            </form>
                            
                         </div>
                     {% endfor %}
