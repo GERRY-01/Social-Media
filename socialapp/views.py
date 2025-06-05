@@ -46,7 +46,11 @@ def likes(request, post_id):
 
 def profile(request):
     user_posts = Posts.objects.filter(user = request.user).order_by('-id')
-    return render(request, 'profile.html',{'user_posts':user_posts})
+    followers = Follow.objects.filter(following = request.user).count()
+    following = Follow.objects.filter(follower = request.user).count()
+    posts_count = user_posts.count()
+
+    return render(request, 'profile.html',{'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count})
 
 def follow(request, user_id):
     target_user = get_object_or_404(User, id = user_id)
@@ -58,4 +62,14 @@ def follow(request, user_id):
     if not created:
         follow.delete()
     return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id = user_id)
+    user_posts = Posts.objects.filter(user = user).order_by('-id')
+    followers = Follow.objects.filter(following = user).count()
+    following = Follow.objects.filter(follower = user).count()
+    posts_count = user_posts.count()
+    is_following = Follow.objects.filter(follower = request.user, following = user).exists()
+    return render(request, 'view_profile.html',{'user':user,'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count,'is_following':is_following})
+
     
