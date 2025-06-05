@@ -384,7 +384,12 @@
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px; 
-}
+   }
+   .post-time {
+    font-size: 12px;
+    color: #666;
+    margin: 10px;
+   }
 
 
 
@@ -462,6 +467,31 @@
                     <img src="{{ post.media.url }}" alt="Posted Image" class="post-media">
                 {% endif %}
             {% endif %}
+
+
+            
+        {# Insert "People You May Know" after every 5 posts #}
+        {% if forloop.counter|divisibleby:5 %}
+            <div class="suggestions-container" style="margin-top: 20px;">
+                <h3 style="color: #4a148c; margin-bottom: 10px;">People You May Know</h3>
+                <div style="display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px;">
+                    {% for user in suggestions %}
+                        <div class="suggestion-card" style="flex: 0 0 auto; width: 180px; border: 1px solid #ccc; padding: 10px; border-radius: 8px;  text-align: center;">
+                            {% if user.registration.image %}
+                                <img src="{{ user.registration.image.url }}" alt="{{ user.username }}'s profile picture"
+                                    style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px;">
+                            {% else %}
+                                <img src="/static/default-profile.png" alt="Default profile"
+                                    style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px;">
+                            {% endif %}
+                            <p style="margin: 0; font-weight: 600; color:rgb(26, 85, 196);">{{ user.first_name }} {{ user.last_name }}</p>
+                           
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
 
             <div class="post-actions">
                 <!--form for the like button-->
