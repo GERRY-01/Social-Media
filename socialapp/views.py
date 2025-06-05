@@ -20,12 +20,13 @@ def home(request):
             return redirect("home")
     
     all_posts = Posts.objects.all().order_by('-id')
+    suggestions = User.objects.exclude(id = request.user.id)[:5] if request.user.is_authenticated else []
     
     for post in all_posts:
          post.is_liked = post.likes.filter(user=request.user).exists()
 
     
-    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile})
+    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
