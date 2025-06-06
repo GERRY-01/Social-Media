@@ -113,9 +113,50 @@
   color: #333;
   text-align: center;
 }
+.followers-hover {
+  position: relative;
+}
 
+.followers-list {
+  display: none;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+  overflow-y: auto;
+}
 
+.follower-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
+.follower-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.followers-hover:hover .followers-list {
+  display: block;
+}
+.friend_username{
+  text-decoration: none;
+  color: blue;
+}
+.friend_username:hover{
+  text-decoration: underline;
+  color: blue;
+}
 
   
     </style>
@@ -132,9 +173,38 @@
         </div>
         <div class="profile-stats">
             <div class="stat-box"><p>Posts: {{ posts_count }}</p></div>
-            <div class="stat-box"><p>Followers: {{ followers }}</p></div>
-            <div class="stat-box"><p>Following: {{ following }}</p></div>
+
+            <!-- Followers list on hover -->
+            <div class="stat-box followers-hover">
+                <p>Followers: {{ followers }}</p>
+                 <div class="followers-list">
+                    {% for follow in real_followers %}
+                    <div class="follower-item">
+                    <img src="{{ follow.follower.registration.image.url }}" alt="profile pic" class="profile-image">
+                    <a href="{% url 'view_profile' follow.follower.id %}" class = "friend_username"><span>{{follow.follower.username}}</span></a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            
+                 <!-- Following list on hover -->
+            <div class="stat-box followers-hover">
+                <p>Following: {{ following }}</p>
+                 <div class="followers-list">
+                    {% for follow in real_following %}
+                    <div class="follower-item">
+                    <img src="{{ follow.following.registration.image.url }}" alt="profile pic" class="profile-image">
+                    <a href="{% url 'view_profile' follow.following.id %}" class = "friend_username"><span>{{follow.following.username}}</span></a
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            </div>
         </div>
+
+      
 
     </div>
 
