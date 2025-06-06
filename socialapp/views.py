@@ -66,10 +66,13 @@ def follow(request, user_id):
 def view_profile(request, user_id):
     user = get_object_or_404(User, id = user_id)
     user_posts = Posts.objects.filter(user = user).order_by('-id')
+    real_followers = Follow.objects.filter(following = user)
+    real_following = Follow.objects.filter(follower = user)
     followers = Follow.objects.filter(following = user).count()
     following = Follow.objects.filter(follower = user).count()
     posts_count = user_posts.count()
     is_following = Follow.objects.filter(follower = request.user, following = user).exists()
-    return render(request, 'view_profile.html',{'user':user,'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count,'is_following':is_following})
+    following_ids = set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)) if request.user.is_authenticated else set()
+    return render(request, 'view_profile.html',{'user':user,'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count,'is_following':is_following,'following_ids':following_ids, 'real_followers':real_followers,'real_following':real_following})
 
     
