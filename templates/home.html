@@ -510,6 +510,20 @@
                 <p>Posts: {{ post.user.posts.count }}</p>
                 <p>Followers: {{ post.user.follower.count }}</p>
                 <p>Following: {{ post.user.following.count }}</p>
+
+                 <!--form for the follow button-->
+                            {% if request.user != post.user %}
+                            <form method="POST" action="{% url 'follow' post.user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="follow-btn">
+                                    {% if post.user.id in following_ids %}
+                                        Unfollow
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
             </div>
              </div>   
 
