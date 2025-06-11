@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login,authenticate
+from django.contrib.auth import login,authenticate,logout
 from .models import Registration
 from django.contrib import messages
 # Create your views here.
@@ -63,3 +63,7 @@ def user_login(request):
             messages.error(request, 'invalid login')
         
     return render(request, 'login.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect("login")
