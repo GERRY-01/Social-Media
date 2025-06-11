@@ -76,3 +76,5 @@ def view_profile(request, user_id):
     return render(request, 'view_profile.html',{'user':user,'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count,'is_following':is_following,'following_ids':following_ids, 'real_followers':real_followers,'real_following':real_following})
 
     
+def error_404(request, exception):
+    return render(request, '404.html', status=404)
