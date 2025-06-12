@@ -7,5 +7,6 @@ urlpatterns = [
     path('likes/<int:post_id>', views.likes, name="likes"),
     path('/profile',views.profile,name="profile"),
     path('follow/<int:user_id>',views.follow,name="follow"),
-    path('view_profile/<int:user_id>',views.view_profile,name="view_profile")
+    path('view_profile/<int:user_id>',views.view_profile,name="view_profile"),
+    path('/messages',views.messages,name="messages")
 ]
