@@ -15,3 +15,15 @@ class Registration(models.Model):
     gender = models.CharField(choices=gender_choices, max_length=10)
     location = models.CharField(max_length=50)
     hobbies = models.CharField(max_length=200)
+    
+class Room(models.Model):
+    name = models.CharField(max_length=1000)
+    
+class Message(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    message = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
