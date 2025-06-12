@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render,redirect
 from . models import Comments, Posts,Likes,Follow
-from authentication.models import Registration,User
+from authentication.models import Message, Registration, Room
+from django.contrib.auth.models import User
 # Create your views here.
 def home(request):
     if request.user.is_authenticated: 
@@ -78,3 +79,22 @@ def view_profile(request, user_id):
     
 def error_404(request, exception):
     return render(request, '404.html', status=404)
+
+
+def get_room_name(sender_id, receiver_id):
+    sorted_ids = sorted([sender_id, receiver_id])
+    return f"chat_{sorted_ids[0]}_{sorted_ids[1]}"
+
+def messages(request):
+    other_users = User.objects.exclude(id = request.user.id)
+    chat_with = request.GET.get('chat_with')
+    selected_user = None
+    messages = []
+    other_users = User.objects.exclude(id=request.user.id)
+    
+    if chat_with:
+        selected_user = get_object_or_404(User, id=int(chat_with))
+        room_name = get_room_name(request.user.id, selected_user.id)
+        room,_ = Room.objects.get_or_create(name=room_name)
+        messages = Message.objects.filter(room=room).order_by('date')
+    return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages})
