@@ -118,5 +118,5 @@ def messages(request):
             is_read=False
         ).update(is_read=True)
         
-        messages = Message.objects.filter(room=room).order_by('date')
+        messages = Message.objects.filter(room=room).order_by('sent_at')
     return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map})
