@@ -169,17 +169,6 @@
             border-radius: 10px;
             margin-left: 10px;
         }
-        .day-label {
-            text-align: center;
-            font-size: 0.85rem;
-            background: #e4e6eb;
-            padding: 6px 12px;
-            border-radius: 20px;
-            margin: 12px auto;
-            color: #555;
-            width: fit-content;
-        }
-
         .time {
             font-size: 0.7rem;
             color: #888;
@@ -227,34 +216,16 @@
         </div>
 
         <!-- Messages -->
+         {% load tz %}
         <div class="messages" id="messages">
-            <!-- Group messages by date -->
-            {% regroup messages by sent_at.date as day_messages %}
-            {% for day in day_messages %}
-                <div class="day-label">
-                    {% if day.grouper == today %}
-                        Today
-                    {% elif day.grouper == yesterday %}
-                        Yesterday
-                    {% else %}
-                        {{ day.grouper|date:"d M Y" }}
-                    {% endif %}
-                </div>
-                <!-- Messages for the day -->
-                {% for message in day.list %}
-                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                        <span>{{ message.message }}</span>
-                        <p class="time">{{ message.sent_at|date:"H:i" }}</p>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-
-            {% comment %} {% for message in messages %}
+            {% timezone "Africa/Nairobi" %}
+            {% for message in messages %}
                 <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
                     <span>{{ message.message }}</span>
-                    <p>{{ message.date|date:"H:i" }}</p>
+                    <p class="time">{{ message.sent_at|date:"H:i" }}</p>
                 </div>
-            {% endfor %} {% endcomment %}
+            {% endfor %} 
+            {% endtimezone %}
         </div>
 
         <div class="input-area">
@@ -272,10 +243,13 @@
         socket.onmessage = function(event) {
             let data = JSON.parse(event.data);
             let messagesDiv = document.getElementById("messages");
+            const time = new Date(data.sent_at);
+            const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',hour12: false });
 
             let messageDiv = document.createElement("div");
             messageDiv.className = "message " + (data.sender === "{{ request.user.username }}" ? "sent" : "received");
             messageDiv.innerHTML = `<span>${data.message}</span>`;
+            messageDiv.innerHTML += `<p class="time">${formattedTime}</p>`;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         };
