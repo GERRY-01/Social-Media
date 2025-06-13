@@ -3,6 +3,7 @@ from . models import Comments, Posts,Likes,Follow
 from authentication.models import Message, Registration, Room
 from django.contrib.auth.models import User
 from django.db.models import Count
+from datetime import date,timedelta
 # Create your views here.
 def home(request):
     if request.user.is_authenticated: 
@@ -92,6 +93,8 @@ def messages(request):
     selected_user = None
     messages = []
     other_users = User.objects.exclude(id=request.user.id)
+    today = date.today()
+    yesterday = today - timedelta(days=1)
     
     unread_counts = (
         Message.objects
@@ -119,4 +122,4 @@ def messages(request):
         ).update(is_read=True)
         
         messages = Message.objects.filter(room=room).order_by('sent_at')
-    return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map})
+    return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map,'today':today,'yesterday':yesterday})
