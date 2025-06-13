@@ -15,6 +15,8 @@ class Registration(models.Model):
     gender = models.CharField(choices=gender_choices, max_length=10)
     location = models.CharField(max_length=50)
     hobbies = models.CharField(max_length=200)
+    last_seen = models.DateTimeField(null=True, blank=True)
+    is_online = models.BooleanField(default=False)
     
 class Room(models.Model):
     name = models.CharField(max_length=1000)
@@ -26,4 +28,5 @@ class Message(models.Model):
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    
     
