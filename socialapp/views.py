@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from . models import Comments, Posts,Likes,Follow
 from authentication.models import Message, Registration, Room
 from django.contrib.auth.models import User
+from django.db.models import Count
 # Create your views here.
 def home(request):
     if request.user.is_authenticated: 
@@ -92,9 +93,30 @@ def messages(request):
     messages = []
     other_users = User.objects.exclude(id=request.user.id)
     
+    unread_counts = (
+        Message.objects
+        .filter(receiver=request.user, is_read=False)
+        .values('sender')
+        .annotate(count=Count('id'))
+    )
+    
+    
+    # Map sender ID to unread count
+    unread_map = {item['sender']: item['count'] for item in unread_counts}
+           
+    
     if chat_with:
         selected_user = get_object_or_404(User, id=int(chat_with))
         room_name = get_room_name(request.user.id, selected_user.id)
         room,_ = Room.objects.get_or_create(name=room_name)
+        
+          # Mark messages as read
+        Message.objects.filter(
+            room=room,
+            sender=selected_user,
+            receiver=request.user,
+            is_read=False
+        ).update(is_read=True)
+        
         messages = Message.objects.filter(room=room).order_by('date')
-    return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages})
+    return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map})
