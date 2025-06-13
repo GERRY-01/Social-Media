@@ -169,6 +169,23 @@
             border-radius: 10px;
             margin-left: 10px;
         }
+        .day-label {
+            text-align: center;
+            font-size: 0.85rem;
+            background: #e4e6eb;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 12px auto;
+            color: #555;
+            width: fit-content;
+        }
+
+        .time {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
 
     </style>
 </head>
@@ -211,12 +228,33 @@
 
         <!-- Messages -->
         <div class="messages" id="messages">
-            {% for message in messages %}
+            <!-- Group messages by date -->
+            {% regroup messages by sent_at.date as day_messages %}
+            {% for day in day_messages %}
+                <div class="day-label">
+                    {% if day.grouper == today %}
+                        Today
+                    {% elif day.grouper == yesterday %}
+                        Yesterday
+                    {% else %}
+                        {{ day.grouper|date:"d M Y" }}
+                    {% endif %}
+                </div>
+                <!-- Messages for the day -->
+                {% for message in day.list %}
+                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        <span>{{ message.message }}</span>
+                        <p class="time">{{ message.sent_at|date:"H:i" }}</p>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% comment %} {% for message in messages %}
                 <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
                     <span>{{ message.message }}</span>
                     <p>{{ message.date|date:"H:i" }}</p>
                 </div>
-            {% endfor %}
+            {% endfor %} {% endcomment %}
         </div>
 
         <div class="input-area">
