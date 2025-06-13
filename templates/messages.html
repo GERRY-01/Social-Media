@@ -174,6 +174,30 @@
             color: #888;
             margin-top: 4px;
         }
+        .date-label {
+            text-align: center;
+            font-size: 0.9rem;
+            margin: 1em 0;
+            color: gray;
+        }
+        .status-online{
+            font-size: 12px;
+            color: gray;
+        }
+        .status-last-seen{
+            font-size: 12px;
+            color: gray;
+        }
+        .online-dot {
+            position: relative;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background-color: #00ff00; /* green */
+            border: 2px solid white;
+            border-radius: 50%;
+        }
 
 
     </style>
@@ -194,7 +218,18 @@
             <a href="?chat_with={{ user.id }}" style="text-decoration: none; color: inherit;">
                 <div class="user">
                     <img src="{{ user.registration.image.url }}" alt="{{ user.username }}">
+                    {% if user.registration.is_online %}
+                        <span class="online-dot"></span>
+                    {% endif %}
                     <span>{{ user.username }}</span>
+                    <!-- checking if a user is online or not-->
+                     {% if user.registration.is_online %}
+                        <span class="status-online">Online</span>
+                    {% elif user.registration.last_seen %}
+                        <span class="status last-seen">Last seen {{ user.registration.last_seen|timesince }} ago</span>
+                    {% else %}
+                        <span class="status last-seen">Last seen: unknown</span>
+                    {% endif %}
                     {% if unread_count > 0 %}
                            {% if unread_count and user.id|stringformat:"s" != request.GET.chat_with %}
                                 <span class="unread-count">{{ unread_count }}</span>
@@ -213,20 +248,42 @@
         <div class="chat-header">
             <img src="{{ selected_user.registration.image.url }}" alt="{{ selected_user.username }}">
             <h3 id="chat-user-name">{{ selected_user.username }}</h3>
+            {% if selected_user.registration.is_online %}
+                <span class="status-online">Online</span>
+            {% else %}
+                <span class="status last-seen">Last seen {{ selected_user.registration.last_seen|timesince }} ago</span>
+            {% endif %}
         </div>
 
         <!-- Messages -->
-         {% load tz %}
+       {% load tz %}
         <div class="messages" id="messages">
+            {% regroup messages by sent_at.date as days %}
             {% timezone "Africa/Nairobi" %}
-            {% for message in messages %}
-                <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                    <span>{{ message.message }}</span>
-                    <p class="time">{{ message.sent_at|date:"H:i" }}</p>
-                </div>
-            {% endfor %} 
+            {% for day in days %}
+                {% with day.grouper as sent_date %}
+                    <div class="date-group">
+                        {% if sent_date == today %}
+                            <p class="date-label">Today</p>
+                        {% elif sent_date == yesterday %}
+                            <p class="date-label">Yesterday</p>
+                        {% else %}
+                            <p class="date-label">{{ sent_date|date:"d M Y" }}</p>
+                        {% endif %}
+
+                        {% for message in day.list %}
+                            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                                <span>{{ message.message }}</span>
+                                <p class="time">{{ message.sent_at|date:"h:i A" }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endwith %}
+            {% endfor %}
             {% endtimezone %}
         </div>
+
+
 
         <div class="input-area">
             <input type="text" id="message-input" placeholder="Type a message...">
@@ -244,7 +301,7 @@
             let data = JSON.parse(event.data);
             let messagesDiv = document.getElementById("messages");
             const time = new Date(data.sent_at);
-            const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',hour12: false });
+            const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',hour12: true });
 
             let messageDiv = document.createElement("div");
             messageDiv.className = "message " + (data.sender === "{{ request.user.username }}" ? "sent" : "received");
