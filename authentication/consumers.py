@@ -16,7 +16,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = get_room_name(self.user.id, self.other_user_id)
         self.room_group_name = f'chat_{self.room_name}'
         self.room,_ = await database_sync_to_async(Room.objects.get_or_create)(name=self.room_name)
-      
+        
+        #mark users as online when they connect
+        await self.update_online_status(True)
+            
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -24,10 +27,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        #mark users as offline when they disconnect
+        await self.update_online_status(False,last_seen = now())
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
+        
+    async def update_online_status(self, is_online,last_seen = None):
+        registration = await database_sync_to_async(Registration.objects.get)(user=self.user)
+        registration.is_online = is_online
+        if last_seen:
+            registration.last_seen = last_seen
+        await database_sync_to_async(registration.save)()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
