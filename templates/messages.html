@@ -1,3 +1,5 @@
+{% load custom_tags %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,6 +161,15 @@
             color: #333;
             margin: 0;
         }
+        .unread-count {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -173,12 +184,19 @@
         <div class="sidebar-header">Messages</div>
         <div id="user-list">
          {% for user in other_users %}
+                {% with unread_map|get_item:user.id as unread_count %}
             <a href="?chat_with={{ user.id }}" style="text-decoration: none; color: inherit;">
                 <div class="user">
                     <img src="{{ user.registration.image.url }}" alt="{{ user.username }}">
                     <span>{{ user.username }}</span>
+                    {% if unread_count > 0 %}
+                           {% if unread_count and user.id|stringformat:"s" != request.GET.chat_with %}
+                                <span class="unread-count">{{ unread_count }}</span>
+                            {% endif %}
+                    {% endif %}
                 </div>
             </a>
+            {% endwith %}
          {% endfor %}
 
         </div>
@@ -187,16 +205,16 @@
     <!-- Chat Area -->
     <div class="chat-area" id="chat-area" style="{% if selected_user %}display: flex;{% else %}display: none;{% endif %}">
         <div class="chat-header">
-            <img id="chat-user-img" src="{{ selected_user.registration.image.url }}" alt="">
+            <img src="{{ selected_user.registration.image.url }}" alt="{{ selected_user.username }}">
             <h3 id="chat-user-name">{{ selected_user.username }}</h3>
         </div>
 
+        <!-- Messages -->
         <div class="messages" id="messages">
             {% for message in messages %}
                 <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                    <img src="{{ message.sender.registration.image.url }}" alt="{{ message.sender.username }}" 
-                    style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
                     <span>{{ message.message }}</span>
+                    <p>{{ message.date|date:"H:i" }}</p>
                 </div>
             {% endfor %}
         </div>
@@ -219,7 +237,7 @@
 
             let messageDiv = document.createElement("div");
             messageDiv.className = "message " + (data.sender === "{{ request.user.username }}" ? "sent" : "received");
-            messageDiv.innerHTML = `<strong>${data.sender}:</strong> <span>${data.message}</span>`;
+            messageDiv.innerHTML = `<span>${data.message}</span>`;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         };
