@@ -443,6 +443,18 @@
     object-fit: cover;
     margin-bottom: 8px;
     }
+    .story-ring {
+        border: 3px solid #00ff00;
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+    }
+    .story {
+        display: inline-block;
+        margin: 10px;
+        text-align: center;
+    }
 
 
     </style>
@@ -471,6 +483,20 @@
             <span class="greeting-text">Hello, {{ request.user.username }}!</span>
         </div>
         {% endif %}
+
+
+    <!--Stories Content-->
+    <div class="stories-section">
+        {% for story in stories %}
+            <div class="story">
+                <a href="{% url 'view_story' story.id %}">
+                    <img src="{{ story.user.registration.image.url }}" class="story-ring" alt="Story">
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+
 
     <!-- Main Content -->
     <div class="container">
