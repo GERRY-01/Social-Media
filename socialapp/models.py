@@ -30,3 +30,12 @@ class Follow(models.Model):
     
     class Meta:
         unique_together = ('follower','following')
+        
+class Stories(models.Model):
+    user = models.ForeignKey(User, on_delete= models.CASCADE, related_name='stories')
+    media = models.FileField(upload_to='files')
+    created_at = models.DateTimeField(auto_now_add=True)
+    expire_at = models.DateTimeField(default=lambda:timezone.now() + timezone.timedelta(days=1))
+    
+    class Meta:
+        ordering = ['-created_at']
