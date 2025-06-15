@@ -30,12 +30,17 @@ class Follow(models.Model):
     
     class Meta:
         unique_together = ('follower','following')
-        
+   
+   
+def get_expiry_time():
+    return timezone.now() + timezone.timedelta(days=1)
+
 class Stories(models.Model):
     user = models.ForeignKey(User, on_delete= models.CASCADE, related_name='stories')
     media = models.FileField(upload_to='files')
+    caption = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    expire_at = models.DateTimeField(default=lambda:timezone.now() + timezone.timedelta(days=1))
+    expire_at = models.DateTimeField(default=get_expiry_time)
     
     class Meta:
         ordering = ['-created_at']
