@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404, render,redirect
-from . models import Comments, Posts,Likes,Follow
+from . models import Comments, Posts,Likes,Follow,Stories
 from authentication.models import Message, Registration, Room
 from django.contrib.auth.models import User
 from django.db.models import Count
 from datetime import date,timedelta
+from django.utils import timezone
+
 # Create your views here.
 def home(request):
     if request.user.is_authenticated: 
@@ -25,13 +27,14 @@ def home(request):
     all_posts = Posts.objects.all().order_by('-id')
     suggestions = User.objects.exclude(id = request.user.id)[:5] if request.user.is_authenticated else []
     following_ids = set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)) if request.user.is_authenticated else set()
+    stories = Stories.objects.filter(expire_at__gt =timezone.now()).order_by('-created_at')
     
     
     for post in all_posts:
          post.is_liked = post.likes.filter(user=request.user).exists()
 
     
-    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions,'following_ids':following_ids})
+    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions,'following_ids':following_ids,'stories':stories})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
@@ -52,8 +55,17 @@ def profile(request):
     followers = Follow.objects.filter(following = request.user).count()
     following = Follow.objects.filter(follower = request.user).count()
     posts_count = user_posts.count()
-
-    return render(request, 'profile.html',{'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count})
+    
+    
+    if request.method == 'POST':
+        if 'media' in request.FILES:
+            file = request.FILES.get("media")
+            caption = request.POST.get("caption")
+            my_story = Stories(user = request.user,media = file, caption = caption)
+            my_story.save()
+            return redirect("home")
+    stories = Stories.objects.filter(expire_at__gt =timezone.now())
+    return render(request, 'profile.html',{'user_posts':user_posts,'followers':followers,'following':following,'posts_count':posts_count,'stories':stories})
 
 def follow(request, user_id):
     target_user = get_object_or_404(User, id = user_id)
@@ -123,3 +135,20 @@ def messages(request):
         
         messages = Message.objects.filter(room=room).order_by('sent_at')
     return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map,'today':today,'yesterday':yesterday})
+
+# def stories(request):
+#     if request.method == 'POST':
+#         if 'media' in request.FILES:
+#             file = request.FILES.get("media")
+#             caption = request.POST.get("caption")
+#             my_story = Stories(user = request.user,media = file, caption = caption)
+#             my_story.save()
+#             return redirect("home")
+#     stories = Stories.objects.filter(expire_at__gt =timezone.now() )
+#     return render(request, 'profile.html',{'stories':stories})
+
+def view_story(request, story_id):
+    story = get_object_or_404(Stories, id = story_id)
+    video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
+    is_video = any(story.media.name.endswith(ext) for ext in video_extensions)
+    return render(request, 'view_story.html', {'story':story,'is_video':is_video})
