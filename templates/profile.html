@@ -221,7 +221,7 @@
 
         <!-- Hidden Story Upload Form -->
         <div id="story-form-container" class="story-form-container">
-            <form method="POST" enctype="multipart/form-data" action="" class="story-form">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'profile' %}" class="story-form">
                 {% csrf_token %}
 
                 <div class="form-group">
