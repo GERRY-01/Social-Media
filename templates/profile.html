@@ -142,6 +142,63 @@
   color: #888;
   margin: 40px 20px;
 }
+.story-form-container {
+    display: none;
+    margin-top: 20px;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.story-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="file"],
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-actions {
+    text-align: right;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.upload-btn {
+    background-color: #28a745;
+    color: white;
+    margin-right: 10px;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
 
        
 
@@ -154,12 +211,35 @@
     <div class="profile-header">
         <img src="{{ request.user.registration.image.url }}" alt="Profile Picture">
             <h2>{{ request.user.username }}</h2>
+            <button onclick = "togglestory()" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Add to Story</button>
         <div class="profile-stats">
             <p class = "stat-box">Posts: {{ posts_count }}</p>
             <p class = "stat-box">Followers: {{ followers }}</p>
             <p class = "stat-box">Following: {{ following }}</p>
         </div>
     </div>
+
+        <!-- Hidden Story Upload Form -->
+        <div id="story-form-container" class="story-form-container">
+            <form method="POST" enctype="multipart/form-data" action="" class="story-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="media">Select file (image/video):</label>
+                    <input type="file" name="media" id="media" accept="image/*,video/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="caption">Caption (optional):</label>
+                    <input type="text" name="caption" id="caption" maxlength="100" placeholder="Say something...">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn upload-btn">Upload</button>
+                    <button type="button" onclick="togglestory()" class="btn cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
 
     <div class="profile-details">
         <label>First Name:</label>
@@ -213,6 +293,16 @@
     <p class="no-posts-text">You haven't posted anything yet.</p>
 {% endif %}
 
-
+<script>
+    function togglestory() {
+        var storyFormContainer = document.getElementById("story-form-container");
+        var currentDisplay = window.getComputedStyle(storyFormContainer).display;
+        if ( currentDisplay === "none") {
+            storyFormContainer.style.display = "block";
+        } else {
+            storyFormContainer.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>
