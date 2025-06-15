@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story</title>
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .story-container {
+            margin-top: 50px;
+        }
+        .profile-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .profile-info img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .story-media {
+            max-width: 90%;
+            max-height: 70vh;
+            margin: auto;
+        }
+        .caption {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="story-container">
+        <div class="profile-info">
+            <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
+            <h3>{{ story.user.username }}</h3>
+        </div>
+
+        {% if is_video %}
+            <video controls class="story-media">
+                <source src="{{ story.media.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% else %}
+            <img src="{{ story.media.url }}" alt="Story Media" class="story-media">
+        {% endif %}
+
+        {% if story.caption %}
+            <div class="caption">{{ story.caption }}</div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
