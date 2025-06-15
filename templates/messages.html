@@ -162,7 +162,7 @@
             margin: 0;
         }
         .unread-count {
-            background-color: red;
+            background-color:rgb(6, 228, 6);
             color: white;
             font-size: 12px;
             padding: 4px 8px;
@@ -183,15 +183,17 @@
         .status-online{
             font-size: 12px;
             color: gray;
+            margin-left: 10px;
         }
         .status-last-seen{
             font-size: 12px;
             color: gray;
+            margin-left: 10px;
         }
         .online-dot {
             position: relative;
-            bottom: 2px;
-            right: 2px;
+            bottom: 18px;
+            right: 18px;
             width: 10px;
             height: 10px;
             background-color: #00ff00; /* green */
@@ -226,9 +228,9 @@
                      {% if user.registration.is_online %}
                         <span class="status-online">Online</span>
                     {% elif user.registration.last_seen %}
-                        <span class="status last-seen">Last seen {{ user.registration.last_seen|timesince }} ago</span>
+                        <span class="status-last-seen">Last seen {{ user.registration.last_seen|timesince }} ago</span>
                     {% else %}
-                        <span class="status last-seen">Last seen: unknown</span>
+                        <span class="status-last-seen">Last seen: unknown</span>
                     {% endif %}
                     {% if unread_count > 0 %}
                            {% if unread_count and user.id|stringformat:"s" != request.GET.chat_with %}
@@ -248,10 +250,11 @@
         <div class="chat-header">
             <img src="{{ selected_user.registration.image.url }}" alt="{{ selected_user.username }}">
             <h3 id="chat-user-name">{{ selected_user.username }}</h3>
+            <!-- checking if a user is online or not-->
             {% if selected_user.registration.is_online %}
                 <span class="status-online">Online</span>
             {% else %}
-                <span class="status last-seen">Last seen {{ selected_user.registration.last_seen|timesince }} ago</span>
+                <span class="status-last-seen">Last seen {{ selected_user.registration.last_seen|timesince }} ago</span>
             {% endif %}
         </div>
 
