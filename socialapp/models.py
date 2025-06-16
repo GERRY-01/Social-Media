@@ -1,6 +1,8 @@
+from datetime import timedelta
 from django.db import models
 from authentication.models import User
 from django.utils import timezone
+from django.utils.timezone import localtime
 
 # Create your models here.
 class Posts(models.Model):
@@ -44,3 +46,16 @@ class Stories(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+        
+     #defined this function to format the time of the story   
+    def format_story_time(story):
+        time_diff = timezone.now() - story.created_at
+        if time_diff < timedelta(minutes=1):
+            return "Just now"
+        elif time_diff < timedelta(hours=1):
+            minutes = int(time_diff.total_seconds() / 60)
+            return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+        elif time_diff < timedelta(days=1) and localtime(story.created_at).date() == timezone.now().date():
+            return f"Today at {localtime(story.created_at).strftime('%I:%M %p')}"
+        else:
+            return f"Yesterday at {localtime(story.created_at).strftime('%I:%M %p')}"
