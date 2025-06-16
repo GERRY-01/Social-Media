@@ -516,18 +516,20 @@
         </div>
         {% endif %}
 
-
-    <!--Stories Content-->
-    <div class="stories-section">
-        {% for story in stories %}
-            <div class="story">
-                <a href="{% url 'view_story' story.id %}">
-                    <img src="{{ story.user.registration.image.url }}" class="story-ring" alt="Story">
-                </a>
-                <p>{{ story.user.username }}</p>
-            </div>
-        {% endfor %}
-    </div>
+        
+            <!-- Stories Content -->
+        <div class="stories-section">
+            {% for user, stories in user_stories.items %}
+                {% with first_story=stories.0 %}
+                    <div class="story">
+                        <a href="{% url 'view_story' first_story.id %}">
+                            <img src="{{ user.registration.image.url }}" class="story-ring" alt="Story">
+                        </a>
+                        <p>{{ user.username }}</p>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
 
 
 
@@ -558,7 +560,22 @@
     {% for post in all_posts %}
         <div class="post-card">
             <div class= "post-header">
-            <img class = "post-profile-pic" src="{{ post.user.registration.image.url }}" alt="Profile Picture">
+
+    <!-- Check if the post's user has an active story -->
+          {% if post.user.id in user_with_active_stories %}
+            <div class="story">
+                <a href="{% url 'view_story' post.user.id %}">
+                    <img src="{{ post.user.registration.image.url }}" class="story-ring" alt="Story">
+                    <p>{{ post.user.username }}</p>
+                </a>
+            </div>
+        {% else %}
+            <a href="{% url 'view_profile' post.user.id %}" class="profile-link">
+                <img class="post-profile-pic" src="{{ post.user.registration.image.url }}" alt="Profile Picture">
+            </a>
+        {% endif %}
+
+            
 
             <!-- Profile hover card -->
             <div class="profile-hover-wrapper">
