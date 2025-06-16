@@ -1,3 +1,4 @@
+from collections import defaultdict
 from django.shortcuts import get_object_or_404, render,redirect
 from . models import Comments, Posts,Likes,Follow,Stories
 from authentication.models import Message, Registration, Room
@@ -28,13 +29,23 @@ def home(request):
     suggestions = User.objects.exclude(id = request.user.id)[:5] if request.user.is_authenticated else []
     following_ids = set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)) if request.user.is_authenticated else set()
     stories = Stories.objects.filter(expire_at__gt =timezone.now()).order_by('-created_at')
+    users_with_active_stories = Stories.objects.filter(expire_at__gt =timezone.now()).values_list('user_id', flat=True).distinct()
+    
+    #grouping stories by users
+    user_stories = defaultdict(list)
+    for story in stories:
+        user_stories[story.user].append(story)
+    
+    user_stories = dict(user_stories)
     
     
     for post in all_posts:
          post.is_liked = post.likes.filter(user=request.user).exists()
 
     
-    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions,'following_ids':following_ids,'stories':stories})
+    return render(request, 'home.html', {'all_posts':all_posts,'profile':profile,'suggestions':suggestions,
+                'following_ids':following_ids,'stories':stories,'users_with_active_stories':users_with_active_stories,
+                'user_stories':user_stories})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
@@ -136,19 +147,11 @@ def messages(request):
         messages = Message.objects.filter(room=room).order_by('sent_at')
     return render(request, 'messages.html',{'other_users':other_users,'selected_user':selected_user,'messages':messages,'unread_map':unread_map,'today':today,'yesterday':yesterday})
 
-# def stories(request):
-#     if request.method == 'POST':
-#         if 'media' in request.FILES:
-#             file = request.FILES.get("media")
-#             caption = request.POST.get("caption")
-#             my_story = Stories(user = request.user,media = file, caption = caption)
-#             my_story.save()
-#             return redirect("home")
-#     stories = Stories.objects.filter(expire_at__gt =timezone.now() )
-#     return render(request, 'profile.html',{'stories':stories})
 
 def view_story(request, story_id):
     story = get_object_or_404(Stories, id = story_id)
     video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
     is_video = any(story.media.name.endswith(ext) for ext in video_extensions)
-    return render(request, 'view_story.html', {'story':story,'is_video':is_video})
+    user = story.user
+    user_stories = Stories.objects.filter(user = user,expire_at__gt =timezone.now()).order_by('-created_at')
+    return render(request, 'view_story.html', {'story':story,'is_video':is_video,'user_stories':user_stories,'user':user})
