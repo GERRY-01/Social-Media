@@ -34,29 +34,80 @@
             margin-top: 10px;
             font-size: 1.2em;
         }
+        .story-slide {
+            display: none;
+        }
+        .story-slide.active {
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+            align-items: center;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background-color: white;
+            animation: fillBar 30s linear forwards;
+        }
+
+        @keyframes fillBar {
+            from {
+                width: 0%;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+
     </style>
 </head>
 <body>
 
     <div class="story-container">
+                <div class="progress-bar">
+                 <div class="progress-fill"></div>
+                </div>
+
         <div class="profile-info">
             <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
             <h3>{{ story.user.username }}</h3>
         </div>
 
-        {% if is_video %}
-            <video controls class="story-media">
-                <source src="{{ story.media.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% else %}
-            <img src="{{ story.media.url }}" alt="Story Media" class="story-media">
-        {% endif %}
+        {% for story in user_stories%}
+        <div class="story-slide {% if forloop.first %} active{% endif %}">
+            {% if story.is_video %}
+                <video class="story-media" autoplay playsinline>
+                    <source src="{{ story.media.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% else %}
+                <img class="story-media" src="{{ story.media.url }}" alt="Story Media">
+            {% endif %}
+                <p class="caption">{{ story.caption }}</p>
+        </div>
+        {% endfor %}
+           
 
-        {% if story.caption %}
-            <div class="caption">{{ story.caption }}</div>
-        {% endif %}
     </div>
+<script>
+    const storySlides = document.querySelectorAll('.story-slide');
+    let currentSlide = 0;
 
+    function showNextSlide() {
+        storySlides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % storySlides.length;
+        storySlides[currentSlide].classList.add('active');
+    }
+
+    setInterval(showNextSlide, 30000);
+</script>
 </body>
 </html>
