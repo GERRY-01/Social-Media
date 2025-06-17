@@ -128,7 +128,13 @@
         <div class="story-slide {% if forloop.first %} active{% endif %}">
             <div class="profile-info">
                 <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
-                <p style= "font-family: 'Times New Roman', Times, serif;">{{ story.user.username }}</p><br>
+                <p style= "font-size: 14px;">
+                    {%if story.user == request.user %}
+                    My Story
+                    {%else%}
+                    {{ story.user.username }}
+                    {%endif%}
+                </p><br>
                 <p style="font-size: 12px; color: #ccc; margin-left: 10px;">{{ story.format_story_time }}</p>
             </div>
             {% if story.is_video %}
