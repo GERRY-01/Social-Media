@@ -149,9 +149,10 @@ def messages(request):
 
 
 def view_story(request, story_id):
-    story = get_object_or_404(Stories, id = story_id)
+    selected_story = get_object_or_404(Stories, id = story_id)
     video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
-    is_video = any(story.media.name.endswith(ext) for ext in video_extensions)
-    user = story.user
+    is_video = any(selected_story.media.name.endswith(ext) for ext in video_extensions)
+    user = selected_story.user
     user_stories = Stories.objects.filter(user = user,expire_at__gt =timezone.now()).order_by('-created_at')
-    return render(request, 'view_story.html', {'story':story,'is_video':is_video,'user_stories':user_stories,'user':user})
+    return render(request, 'view_story.html', {'selected_story':selected_story,'is_video':is_video,'user_stories':user_stories,'user':user})
+
