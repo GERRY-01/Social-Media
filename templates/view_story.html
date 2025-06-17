@@ -93,6 +93,28 @@
             cursor: pointer;
         }
      
+        .controls {
+        display: flex;
+        justify-content: space-between;
+        width: 200px;
+        margin: 20px auto 0;
+        }
+
+        .controls button {
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+        }
+
+        .controls button:hover {
+        background-color: #ccc;
+        }
+
 
 
     </style>
@@ -128,14 +150,21 @@
            
 
     </div>
+
+    <div class="controls">
+        <button id="prevBtn">⟵ Prev</button>
+        <button id="nextBtn">Next ⟶</button>
+    </div>
+
 <script>
     const storySlides = document.querySelectorAll('.story-slide');
     const progressBar = document.getElementById('progress-bar');
     const fills = [];
 
     let currentSlide = 0;
+    let timer; // to control the interval
 
-    // Create progress fills for each story
+    // Create progress fills
     for (let i = 0; i < storySlides.length; i++) {
         const fill = document.createElement('div');
         fill.classList.add('progress-fill');
@@ -143,8 +172,9 @@
         const inner = document.createElement('div');
         inner.classList.add('fill-inner');
         fill.appendChild(inner);
+
         progressBar.appendChild(fill);
-        fills.push(inner);
+        fills.push(inner); // store the fill-inner
     }
 
     function activateSlide(index) {
@@ -153,29 +183,51 @@
         });
 
         fills.forEach((fill, i) => {
-            // Remove the active class to reset animation
             fill.classList.remove('active');
             if (i === index) {
-                // Trigger reflow to restart animation
                 void fill.offsetWidth;
                 fill.classList.add('active');
             }
         });
     }
 
-    activateSlide(currentSlide);
-
     function showNextSlide() {
-        if (currentSlide === storySlides.length - 1) {
-            window.location.href = "{% url 'home' %}";
-        } else {
+        if (currentSlide < storySlides.length - 1) {
             currentSlide++;
+            activateSlide(currentSlide);
+        } else {
+            window.location.href = "{% url 'home' %}";
+        }
+    }
+
+    function showPrevSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
             activateSlide(currentSlide);
         }
     }
 
-    setInterval(showNextSlide, 5000);
+    function startTimer() {
+        clearInterval(timer);
+        timer = setInterval(showNextSlide, 5000);
+    }
+
+    // Initial slide
+    activateSlide(currentSlide);
+    startTimer();
+
+    // Buttons
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        showNextSlide();
+        startTimer(); // restart timer on manual
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        showPrevSlide();
+        startTimer(); // restart timer on manual
+    });
 </script>
+
 
 
 </body>
