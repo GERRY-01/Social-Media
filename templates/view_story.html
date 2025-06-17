@@ -122,20 +122,15 @@
 <body>
 
     <div class="story-container">
-                {% comment %} <div class="progress-bar" id="progress-bar">
-                 <div class="progress-fill"></div>
-                </div> {% endcomment %}
-
                 <div class="progress-bar" id="progress-bar"></div>
-
-      <div class="profile-info">
-            <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
-            <p style= "font-family: 'Times New Roman', Times, serif;">{{ story.user.username }}</p><br>
-            <p style="font-size: 12px; color: #ccc; margin-left: 10px;">{{ story.format_story_time }}</p>
-        </div>
         <button class="cancel-btn" onclick="history.back()">X</button>
         {% for story in user_stories%}
         <div class="story-slide {% if forloop.first %} active{% endif %}">
+            <div class="profile-info">
+                <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
+                <p style= "font-family: 'Times New Roman', Times, serif;">{{ story.user.username }}</p><br>
+                <p style="font-size: 12px; color: #ccc; margin-left: 10px;">{{ story.format_story_time }}</p>
+            </div>
             {% if story.is_video %}
                 <video class="story-media" autoplay playsinline>
                     <source src="{{ story.media.url }}" type="video/mp4">
