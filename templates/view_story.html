@@ -12,6 +12,14 @@
         }
         .story-container {
             margin-top: 50px;
+            width: 50%;
+            height: 90%;
+            max-width: 600px;
+            margin: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
         .profile-info {
             display: flex;
@@ -41,30 +49,50 @@
             display: block;
         }
         .progress-bar {
+            display: flex; /* Align fills horizontally */
+            gap: 4px;
             width: 100%;
             height: 4px;
-            background-color: rgba(255, 255, 255, 0.2);
             margin-bottom: 10px;
-            overflow: hidden;
-            position: relative;
-            align-items: center;
         }
 
         .progress-fill {
+            flex: 1;
             height: 100%;
-            width: 0;
-            background-color: white;
-            animation: fillBar 30s linear forwards;
+            background-color: rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes fillBar {
-            from {
-                width: 0%;
-            }
-            to {
-                width: 100%;
-            }
+       
+        .fill-inner {
+            height: 100%;
+            width: 0%;
+            background-color: white;
+            animation: none;
         }
+
+        .fill-inner.active {
+            animation: fillBar 5s linear forwards;
+        }
+
+
+        @keyframes fillBar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .cancel-btn{
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+     
 
 
     </style>
@@ -72,16 +100,18 @@
 <body>
 
     <div class="story-container">
-                <div class="progress-bar">
+                {% comment %} <div class="progress-bar" id="progress-bar">
                  <div class="progress-fill"></div>
-                </div>
+                </div> {% endcomment %}
 
-        <div class="profile-info">
+                <div class="progress-bar" id="progress-bar"></div>
+
+      <div class="profile-info">
             <img src="{{ story.user.registration.image.url }}" alt="Profile Picture">
-            <h3>{{ story.user.username }}</h3><br>
-            <p>{{ story.format_story_time }}</p>
+            <p style= "font-family: 'Times New Roman', Times, serif;">{{ story.user.username }}</p><br>
+            <p style="font-size: 12px; color: #ccc; margin-left: 10px;">{{ story.format_story_time }}</p>
         </div>
-
+        <button class="cancel-btn" onclick="history.back()">X</button>
         {% for story in user_stories%}
         <div class="story-slide {% if forloop.first %} active{% endif %}">
             {% if story.is_video %}
@@ -100,15 +130,53 @@
     </div>
 <script>
     const storySlides = document.querySelectorAll('.story-slide');
+    const progressBar = document.getElementById('progress-bar');
+    const fills = [];
+
     let currentSlide = 0;
 
-    function showNextSlide() {
-        storySlides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % storySlides.length;
-        storySlides[currentSlide].classList.add('active');
+    // Create progress fills for each story
+    for (let i = 0; i < storySlides.length; i++) {
+        const fill = document.createElement('div');
+        fill.classList.add('progress-fill');
+
+        const inner = document.createElement('div');
+        inner.classList.add('fill-inner');
+        fill.appendChild(inner);
+        progressBar.appendChild(fill);
+        fills.push(inner);
     }
 
-    setInterval(showNextSlide, 30000);
+    function activateSlide(index) {
+        storySlides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+
+        fills.forEach((fill, i) => {
+            // Remove the active class to reset animation
+            fill.classList.remove('active');
+            if (i === index) {
+                // Trigger reflow to restart animation
+                void fill.offsetWidth;
+                fill.classList.add('active');
+            }
+        });
+    }
+
+    activateSlide(currentSlide);
+
+    function showNextSlide() {
+        if (currentSlide === storySlides.length - 1) {
+            window.location.href = "{% url 'home' %}";
+        } else {
+            currentSlide++;
+            activateSlide(currentSlide);
+        }
+    }
+
+    setInterval(showNextSlide, 5000);
 </script>
+
+
 </body>
 </html>
