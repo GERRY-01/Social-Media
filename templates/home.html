@@ -272,8 +272,8 @@
       <h4 class="fw-bold mb-4">SocialMedia</h4>
       <ul class="nav flex-column gap-2">
         <li class="nav-item"><a class="sidebar-link text-dark" href="#">🏠 Home</a></li>
-        <li class="nav-item"><a class="sidebar-link text-dark" href="#">🎥 Reels</a></li>
-        <li class="nav-item"><a class="sidebar-link text-dark" href="#">👥 Followers</a></li>
+        <li class="nav-item"><a class="sidebar-link text-dark" href="{% url 'reels' %}">🎥 Reels</a></li>
+        <li class="nav-item"><a class="sidebar-link text-dark" href="">👥 Followers</a></li>
         <li class="nav-item"><a class="sidebar-link text-dark" href="{% url 'messages' %}">💬 Messages</a></li>
         <li class="nav-item"><a class="sidebar-link text-dark" href="{% url 'profile' %}">🙍 Profile</a></li>
         <li class="nav-item mt-3">
@@ -293,7 +293,7 @@
         <div class="collapse navbar-collapse" id="mobileNavbar">
           <ul class="navbar-nav gap-2 ms-auto">
             <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Reels</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'reels' %}">Reels</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Followers</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'messages' %}">Messages</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
