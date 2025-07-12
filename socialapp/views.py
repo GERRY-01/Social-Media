@@ -32,26 +32,6 @@ def home(request):
     stories = Stories.objects.filter(expire_at__gt =timezone.now()).order_by('-created_at')
     users_with_active_stories = Stories.objects.filter(expire_at__gt =timezone.now()).values_list('user_id', flat=True).distinct()
     
-    #Adding pagination
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        page = int(request.GET.get('page'))
-        posts = all_posts
-        paginator = Paginator(posts, 5)
-        
-        try:
-            page_obj = paginator.page(page)
-        except:
-            return JsonResponse({'status':'error','message':'Page not found'})
-        
-        posts_html = render(request, 'post.html', {'page_obj': page_obj}).content.decode('utf-8')
-        return JsonResponse({'posts_html': posts_html})
-    else:
-        posts = all_posts
-        paginator = Paginator(posts, 3)
-        page_obj = paginator.page(1)
-           
-        
-    
     #grouping stories by users
     user_stories = defaultdict(list)
     for story in stories:
@@ -66,7 +46,7 @@ def home(request):
     
     return render(request, 'home.html', {'profile':profile,'suggestions':suggestions,
                 'following_ids':following_ids,'stories':stories,'users_with_active_stories':users_with_active_stories,
-                'user_stories':user_stories,'page_obj':page_obj})
+                'user_stories':user_stories,'all_posts':all_posts})
 
 def add_comment(request, post_id):
     if request.method == 'POST':
@@ -178,4 +158,5 @@ def view_story(request, story_id):
     return render(request, 'view_story.html', {'selected_story':selected_story,'is_video':is_video,'user_stories':user_stories,'user':user})
 
 def reels(request):
-    return render(request,'reels.html')
+    videos = Posts.objects.filter(media__iendswith='.mp4')
+    return render(request,'reels.html',{'videos':videos})
