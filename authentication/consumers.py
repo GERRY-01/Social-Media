@@ -25,6 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        
 
     async def disconnect(self, close_code):
         #mark users as offline when they disconnect
