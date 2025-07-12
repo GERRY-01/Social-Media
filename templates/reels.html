@@ -152,14 +152,15 @@
   <div class="reels-feed">
     
     <!-- Reel 1 -->
+     {% for video in videos %}
     <div class="reel">
       <div class="reel-content">
         <div class="reel-header">
-          <img src="https://i.pravatar.cc/44?img=5" alt="Profile">
-          <strong>@traveler_lisa</strong>
+          <img src="{{video.user.registration.image.url}}" alt="Profile">
+          <strong>@{{video.user.username}}</strong>
         </div>
-        <div class="reel-caption">Sunset over the Sahara 🌅</div>
-        <video class="reel-video" src="https://www.w3schools.com/html/mov_bbb.mp4" autoplay loop muted playsinline controls ></video>
+        <div class="reel-caption">{{video.caption}}</div>
+        <video class="reel-video" src="{{video.media.url}}" autoplay loop muted playsinline controls ></video>
         <div class="reel-actions">
           <button>👍 Like</button>
           <button>💬 Comment</button>
@@ -167,23 +168,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Reel 2 -->
-    <div class="reel">
-      <div class="reel-content">
-        <div class="reel-header">
-          <img src="https://i.pravatar.cc/44?img=3" alt="Profile">
-          <strong>@fit_mike</strong>
-        </div>
-        <div class="reel-caption">Early morning workout grind 💪</div>
-        <video class="reel-video" src="https://www.w3schools.com/html/movie.mp4" autoplay loop muted playsinline></video>
-        <div class="reel-actions">
-          <button>👍 Like</button>
-          <button>💬 Comment</button>
-          <button>🔗 Share</button>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
 
   </div>
 </div>
